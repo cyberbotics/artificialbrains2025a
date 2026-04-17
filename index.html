@@ -32,13 +32,22 @@
       let webotsView = new WebotsView();
       document.body.appendChild(webotsView);
       webotsView.onready = () => {
+        console.log('[token] onready fired');
+        let attempts = 0;
         const sendToken = () => {
           const socket = webotsView._view?.stream?.socket;
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send('robot:' + ROBOT_NAME + ':token:' + SECRET_TOKEN);
-            console.log('Secret token sent to controller.');
-          } else
-            setTimeout(sendToken, 100);
+          const state = socket ? socket.readyState : 'no-socket';
+          if (socket && state === WebSocket.OPEN) {
+            const payload = 'robot:' + ROBOT_NAME + ':token:' + SECRET_TOKEN;
+            socket.send(payload);
+            console.log('[token] sent payload (attempt ' + attempts + '):', payload);
+          } else {
+            if (attempts++ < 50) {
+              console.log('[token] socket not ready (state=' + state + '), retrying...');
+              setTimeout(sendToken, 200);
+            } else
+              console.error('[token] gave up waiting for socket.');
+          }
         };
         sendToken();
       };
