@@ -31,7 +31,7 @@
       const SECRET_TOKEN = 'MY_SECRET';
       let webotsView = new WebotsView();
       document.body.appendChild(webotsView);
-      webotsView.addEventListener('connect', () => {
+      webotsView.onready = () => {
         const sendToken = () => {
           const socket = webotsView._view?.stream?.socket;
           if (socket && socket.readyState === WebSocket.OPEN) {
@@ -41,7 +41,7 @@
             setTimeout(sendToken, 100);
         };
         sendToken();
-      });
+      };
       webotsView.connect('https://simulation.webots.cloud/1999/session?url=https://github.com/cyberbotics/artificialbrains2025a/blob/main/worlds/receive_token.wbt', undefined, undefined, undefined, 900);
     </script>
   </body>
