@@ -18,6 +18,7 @@ TexturedBackgroundLight {
 }
 E-puck {
   controller "receive_token"
+  window "<none>"
   turretSlot [
     DEF TARGET Pose {
       translation 0 0 0.005
