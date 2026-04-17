@@ -27,9 +27,22 @@
   <body>
     <script type="module">
       import WebotsView from "https://cyberbotics.com/wwi/R2025a/WebotsView.js";
+      const ROBOT_NAME = 'e-puck';
+      const SECRET_TOKEN = 'MY_SECRET';
       let webotsView = new WebotsView();
       document.body.appendChild(webotsView);
-      webotsView.connect('https://simulation.webots.cloud/1999/session?url=https://github.com/cyberbotics/artificialbrains2025a/blob/main/worlds/custom_robot_window.wbt', undefined, undefined, undefined, 900);
+      webotsView.addEventListener('connect', () => {
+        const sendToken = () => {
+          const socket = webotsView._view?.stream?.socket;
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send('robot:' + ROBOT_NAME + ':token:' + SECRET_TOKEN);
+            console.log('Secret token sent to controller.');
+          } else
+            setTimeout(sendToken, 100);
+        };
+        sendToken();
+      });
+      webotsView.connect('https://simulation.webots.cloud/1999/session?url=https://github.com/cyberbotics/artificialbrains2025a/blob/main/worlds/receive_token.wbt', undefined, undefined, undefined, 900);
     </script>
   </body>
 
